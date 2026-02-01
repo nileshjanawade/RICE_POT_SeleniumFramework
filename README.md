@@ -1,86 +1,76 @@
-# Salesforce Login Automation Framework
+# RICE POT Selenium Framework (Enterprise Grade)
 
-An enterprise-grade Selenium automation framework built with Java, Maven, and TestNG, specifically designed for testing the Salesforce login experience.
+## 🏢 Overview
+This is a production-level **RICE POT Selenium Framework** designed for high-accuracy CRM automation (Salesforce.com). Built with **Java, Maven, and TestNG**, it adheres to the highest enterprise standards for robustness, modularity, and zero-defect coding practices.
 
-## 🏗️ Architecture
-
-The framework follows the **Page Object Model (POM)** pattern with a structured layering for scalability and maintainability.
+## 📐 Architecture & Flow
+The framework employs a strictly layered **Page Object Model (POM)** with **PageFactory** initialization.
 
 ```mermaid
-graph TD
-    subgraph Tests
-        T1[ValidLoginTest]
-        T2[InvalidLoginTest]
+graph LR
+    subgraph TestNG_Layer [TestNG Execution Layer]
+        Suite[testng.xml] --> VT[ValidLoginTest]
+        Suite --> IT[InvalidLoginTest]
     end
-    
-    subgraph PageObjects
-        P1[LoginPage]
-        P2[BasePage]
+
+    subgraph Logic_Layer [Framework Logic]
+        VT & IT --> BT[BaseTest]
+        BT --> WDM[WebDriverManager]
+        BT --> Driver[ChromeDriver]
     end
-    
-    subgraph Infrastructure
-        B[BaseTest]
-        D[WebDriverManager]
+
+    subgraph POM_Layer [Page Object Model]
+        VT & IT --> LP[LoginPage]
+        LP --> BP[BasePage]
+        BP --> Wait[WebDriverWait]
     end
-    
-    T1 --> P1
-    T2 --> P1
-    P1 --> P2
-    T1 --> B
-    T2 --> B
-    B --> D
+
+    subgraph UI_Layer [Salesforce UI]
+        LP -- "XPath Locators Only" --> SF[Salesforce Login]
+    end
+
+    style SF fill:#f96,stroke:#333,stroke-width:2px
+    style Suite fill:#bbf,stroke:#333,stroke-width:2px
 ```
 
-## 🚀 Key Features
+## 🛡️ Enterprise Standards Compliance (15+ Years QA Standard)
 
-- **Strict XPath Locators**: Exclusively uses XPath for element identification (no CSS, ID, or Name) as per enterprise security and consistency standards.
-- **Robust Synchronization**: Replaces `Thread.sleep` with fluent `WebDriverWait` for dynamic element handling.
-- **Base Layering**: Includes `BasePage` and `BaseTest` to centralize synchronization, element actions, and lifecycle management.
-- **Advanced Exception Handling**: Every critical action and locator is wrapped in structured `try-catch` blocks with custom error reporting.
-- **TestNG Integration**: Structured test execution using `testng.xml` with priority-based test sequencing.
+As per strict enterprise requirements, this framework implements the following:
 
-## 🛠️ Technology Stack
-
-- **Lanuage**: Java 11+
-- **Build Tool**: Maven
-- **Test Framework**: TestNG
-- **Automation Tool**: Selenium WebDriver 4
-- **Driver Management**: WebDriverManager
+| Requirement | Implementation Detail |
+| :--- | :--- |
+| **Locator Strategy** | **Strictly XPath only.** Zero usage of ID, Name, CSS selectors, or TagName. |
+| **Object Model** | **PageFactory** implementation using `@FindBy` annotations for lazy initialization. |
+| **Wait Strategy** | **Zero `Thread.sleep()`**. Exclusive reliance on `WebDriverWait` and `ExpectedConditions`. |
+| **Exception Handling** | Robust `try-catch` blocks in both Page Objects and Test scripts for graceful failure reporting. |
+| **Lifecycle** | Standard TestNG `@BeforeMethod` and `@AfterMethod` for clean setup/teardown. |
+| **Tone** | Precise, technical, code-first implementation. |
 
 ## 📂 Project Structure
 
-```text
-Project2-RICE_POT_SeleniumFramework/
-├── src/
-│   ├── main/java/pages/
-│   │   ├── BasePage.java       # Reusable element actions
-│   │   └── LoginPage.java      # Salesforce Login Page Factory
-│   └── test/java/tests/
-│       ├── BaseTest.java        # Driver Setup/Teardown
-│       ├── ValidLoginTest.java  # Positive Scenarios
-│       └── InvalidLoginTest.java# Negative Scenarios
-├── src/test/resources/
-│   └── testng.xml               # Execution Suite
-├── pom.xml                      # Maven Dependencies
-└── README.md                    # Project Documentation
+- **`src/main/java/pages/BasePage.java`**: Centralized wrapper for common Selenium actions with built-in explicit waits.
+- **`src/main/java/pages/LoginPage.java`**: Page Object for Salesforce Login using XPath and PageFactory.
+- **`src/test/java/tests/BaseTest.java`**: Infrastructure setup (WebDriver initialization/cleanup).
+- **`src/test/java/tests/ValidLoginTest.java`**: Production-level script for valid login verification.
+- **`src/test/java/tests/InvalidLoginTest.java`**: production-level script for comprehensive invalid case testing (UI verification).
+
+## 🚀 Execution Instructions
+
+### Prerequisites
+- Java JDK 11+
+- Apache Maven 3.6+
+- Chrome Browser
+
+### Running Tests
+Execute the entire suite using the provided `testng.xml`:
+```powershell
+mvn clean test -DsuiteXmlFile=src/test/resources/testng.xml
 ```
 
-## 🏃 How to Run
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/nileshjanawade/RICE_POT_SeleniumFramework.git
-   ```
-2. **Execute tests via Maven**:
-   ```bash
-   mvn clean test
-   ```
-3. **Run specific suite**:
-   ```bash
-   mvn test -DsuiteXmlFile=src/test/resources/testng.xml
-   ```
-
-## 🛡️ Coding Standards
-- **POM with PageFactory**: Standard `@FindBy` initialization.
-- **Zero Placeholder Text**: All actions are validated against live elements.
-- **Encapsulation**: Private WebElements for better security and structure.
+## 📝 Test Coverage
+- **Valid Login**: Verification of successful authentication and URL redirection.
+- **Invalid Login**:
+    - Incorrect Username/Password combinations.
+    - Empty field validation.
+    - Error message presence and text verification via XPath `//div[@id='error']`.
+    - "Remember Me" functionality verification.

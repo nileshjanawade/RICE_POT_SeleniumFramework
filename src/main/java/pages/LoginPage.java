@@ -35,11 +35,29 @@ public class LoginPage {
 
     public void login(String username, String password) {
         try {
-            wait.until(ExpectedConditions.visibilityOf(usernameInput)).sendKeys(username);
+            wait.until(ExpectedConditions.visibilityOf(usernameInput)).clear();
+            usernameInput.sendKeys(username);
+            passwordInput.clear();
             passwordInput.sendKeys(password);
             loginBtn.click();
         } catch (Exception e) {
             throw new RuntimeException("Login failed due to: " + e.getMessage());
+        }
+    }
+
+    public void clickRememberMe() {
+        try {
+            wait.until(ExpectedConditions.elementToBeClickable(rememberMeCheckbox)).click();
+        } catch (Exception e) {
+            throw new RuntimeException("Could not click remember me: " + e.getMessage());
+        }
+    }
+
+    public boolean isErrorMessageDisplayed() {
+        try {
+            return wait.until(ExpectedConditions.visibilityOf(errorMessage)).isDisplayed();
+        } catch (Exception e) {
+            return false;
         }
     }
 

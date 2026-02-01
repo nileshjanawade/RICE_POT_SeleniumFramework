@@ -8,9 +8,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
-public class LoginPage {
-    private WebDriver driver;
-    private WebDriverWait wait;
+public class LoginPage extends BasePage {
 
     @FindBy(xpath = "//input[@id='username']")
     private WebElement usernameInput;
@@ -28,37 +26,21 @@ public class LoginPage {
     private WebElement rememberMeCheckbox;
 
     public LoginPage(WebDriver driver) {
-        this.driver = driver;
-        this.wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-        PageFactory.initElements(driver, this);
+        super(driver);
     }
 
     public void login(String username, String password) {
-        try {
-            wait.until(ExpectedConditions.visibilityOf(usernameInput)).clear();
-            usernameInput.sendKeys(username);
-            passwordInput.clear();
-            passwordInput.sendKeys(password);
-            loginBtn.click();
-        } catch (Exception e) {
-            throw new RuntimeException("Login failed due to: " + e.getMessage());
-        }
+        sendKeys(usernameInput, username);
+        sendKeys(passwordInput, password);
+        click(loginBtn);
     }
 
     public void clickRememberMe() {
-        try {
-            wait.until(ExpectedConditions.elementToBeClickable(rememberMeCheckbox)).click();
-        } catch (Exception e) {
-            throw new RuntimeException("Could not click remember me: " + e.getMessage());
-        }
+        click(rememberMeCheckbox);
     }
 
     public boolean isErrorMessageDisplayed() {
-        try {
-            return wait.until(ExpectedConditions.visibilityOf(errorMessage)).isDisplayed();
-        } catch (Exception e) {
-            return false;
-        }
+        return isDisplayed(errorMessage);
     }
 
     public String getErrorMessage() {
